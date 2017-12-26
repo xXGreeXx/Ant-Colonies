@@ -5,10 +5,10 @@ using UnityEngine;
 public class MainGameHandler : MonoBehaviour {
 
     //define global variables
-    public List<Dirt> dirtBlocks = new List<Dirt>();
-    public List<Ant> ants = new List<Ant>();
+    public static List<Dirt> dirtBlocks = new List<Dirt>();
+    public static List<Ant> ants = new List<Ant>();
 
-    public static float antSpeed = 0.05F;
+    public static float antSpeed = 0.5F;
 
 	//start
 	void Start () {
@@ -34,7 +34,7 @@ public class MainGameHandler : MonoBehaviour {
     //generate base colonies
     private void CreateColonies()
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 1; i++)
         {
             ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.BlackAnt));
         }

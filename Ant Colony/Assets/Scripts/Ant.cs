@@ -50,14 +50,17 @@ public class Ant {
                 renderer.sprite = blackAntWorker;
             }
         }
+
+        targetPoint = new Vector2(x, y);
     }
 
     //simulate ant
     public void Simulate()
     {
+        Debug.Log(Mathf.Abs(self.transform.position.x - targetPoint.x) + " " + Mathf.Abs(self.transform.position.y - targetPoint.y));
         if (Mathf.Abs(self.transform.position.x - targetPoint.x) < MainGameHandler.antSpeed * 5 && Mathf.Abs(self.transform.position.y - targetPoint.y) < MainGameHandler.antSpeed * 5)
         {
-            targetPoint = new Vector2(Random.Range(-400, 400), 0);
+            targetPoint = new Vector2(Random.Range(-75, 75), Random.Range(-50, 0));
         }
         else
         {
@@ -70,7 +73,28 @@ public class Ant {
             if (distanceX < -MainGameHandler.antSpeed) distanceX = -MainGameHandler.antSpeed;
             if (distanceY < -MainGameHandler.antSpeed) distanceY = -MainGameHandler.antSpeed;
 
-            self.transform.position = self.transform.position - new Vector3(distanceX, distanceY, 0);
+            self.GetComponent<Rigidbody2D>().MovePosition(self.transform.position + new Vector3(distanceX, distanceY, 0));
+            float angle = Mathf.Atan2(-distanceY, -distanceX) * Mathf.Rad2Deg;
+            self.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        }
+
+        if (Mathf.Abs(self.transform.position.x - targetPoint.x) < 1 || Mathf.Abs(self.transform.position.y - targetPoint.y) < 1)
+        {
+            Dig();
+        }
+    }
+
+    //tell ant to dig
+    private void Dig()
+    {
+        foreach (Dirt d in MainGameHandler.dirtBlocks)
+        {
+            if (Vector2.Distance(d.self.transform.position, self.transform.position) < 4.5F)
+            {
+                GameObject.Destroy(d.self, 1);
+                MainGameHandler.dirtBlocks.Remove(d);
+                break;
+            }
         }
     }
 }
