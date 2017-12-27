@@ -4,14 +4,42 @@ using UnityEngine;
 
 public class MainGameHandler : MonoBehaviour {
 
+    //enums
+    public enum Weather
+    {
+        Sunny,
+        Rainy,
+        Cloudy,
+        Snowy
+    }
+
+    public enum Season
+    {
+        Summer,
+        Winter,
+        Fall,
+        Spring
+    }
+
     //define global variables
     public static List<Dirt> dirtBlocks = new List<Dirt>();
     public static List<Ant> ants = new List<Ant>();
     public static List<Larva> larvae = new List<Larva>();
+    public static List<Leaf> leaves = new List<Leaf>();
 
     public static float antSpeed = 0.5F;
     public static float ageOfEggToHatch = 50;
     public static float antLifeExpectancy = 500;
+
+    //time/weather system
+    public Season currentSeason;
+    public Weather currentWeather;
+    public int currentHour = 0;
+    public int currentMinute = 0;
+    public int currentDay = 0;
+    public int currentMonth;
+
+    public int currentTemperature;
 
 	//start
 	void Start () {
@@ -43,8 +71,19 @@ public class MainGameHandler : MonoBehaviour {
         }
     }
 
+    //add leaves
+    private void AddLeaves()
+    {
+        if (Random.Range(0, 450) == 50)
+        {
+            leaves.Add(new Leaf(Random.Range(-75, 75), 75, 100));
+        }
+    }
+
 	//update
 	void Update () {
+
+        AddLeaves();
 
         foreach (Ant ant in ants)
         {
