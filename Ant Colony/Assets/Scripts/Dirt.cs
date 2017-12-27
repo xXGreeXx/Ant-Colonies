@@ -10,6 +10,7 @@ public class Dirt {
 
     public GameObject self;
 
+    //constructor
     public Dirt(int x, int y, int size, bool setGrass)
     {
         self = new GameObject("Dirt " + x + y);
