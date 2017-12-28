@@ -80,4 +80,13 @@ public class Ant {
             }
         }
     }
+
+    //decide new point
+    public Vector2 DecideNewPoint()
+    {
+        Vector2 pointToReturn = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
+
+
+        return pointToReturn;
+    }
 }

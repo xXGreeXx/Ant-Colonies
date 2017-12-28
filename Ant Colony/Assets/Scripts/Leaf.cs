@@ -19,6 +19,7 @@ public class Leaf {
         self.transform.localScale = new Vector2(150, 150);
 
         Rigidbody2D rigid = self.AddComponent<Rigidbody2D>();
+        rigid.mass = 20;
         BoxCollider2D collider = self.AddComponent<BoxCollider2D>();
         collider.size = new Vector2(0.75F, 0.25F);
 

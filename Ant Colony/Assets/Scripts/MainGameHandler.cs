@@ -167,7 +167,7 @@ public class MainGameHandler : MonoBehaviour {
 
         //handle time/seasons
         timeCycle += 1 * Time.deltaTime;
-        if (timeCycle >= 3)
+        if (timeCycle >= 0)
         {
             //time
             currentMinute++;
@@ -242,6 +242,12 @@ public class MainGameHandler : MonoBehaviour {
             timeCycle = 0;
         }
 
+        //handle light
+        float combinedColorLerp = 0;
+
+        combinedColorLerp += currentHour / 60 + currentMinute / 120;
+
+        Camera.main.backgroundColor = Color.Lerp(Color.blue, Color.black, combinedColorLerp);
 
         //handle game simulation
         AddLeaves();
@@ -300,7 +306,7 @@ public class MainGameHandler : MonoBehaviour {
                 }
                 else
                 {
-                    selfObject.targetPoint = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
+                    selfObject.targetPoint = selfObject.DecideNewPoint();
                 }
             }
             else
