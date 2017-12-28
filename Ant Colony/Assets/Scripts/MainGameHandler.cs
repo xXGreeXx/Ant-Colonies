@@ -37,16 +37,76 @@ public class MainGameHandler : MonoBehaviour {
     public int currentHour = 0;
     public int currentMinute = 0;
     public int currentDay = 0;
-    public int currentMonth;
+    public int currentMonth = 0;
+    public int currentYear = 0;
 
-    public int currentTemperature;
+    public int currentTemperature = 0;
+
+    float timeCycle = 0;
 
 	//start
 	void Start () {
         GenerateGround(450, 150, 1000);
         CreateColonies();
+        StartBaseWeatherDateTime();
 	}
 	
+    //start base weather/date/time
+    private void StartBaseWeatherDateTime()
+    {
+        currentHour = 8;
+        currentMinute = 30;
+
+        currentDay = System.DateTime.Now.Day;
+        currentMonth = System.DateTime.Now.Month;
+        currentYear = System.DateTime.Now.Year;
+
+        //seasons/weather/temperature
+        if (currentMonth <= 3)
+        {
+            currentSeason = Season.Spring;
+            int i = Random.Range(1, 4);
+            if (i == 1) currentWeather = Weather.Rainy;
+            else if (i == 2) currentWeather = Weather.Cloudy;
+            else if (i == 3) currentWeather = Weather.Sunny;
+
+            if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(50, 60);
+            if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(45, 60);
+            if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(60, 70);
+        }
+        else if (currentMonth <= 6)
+        {
+            currentSeason = Season.Summer;
+            int i = Random.Range(1, 5);
+            if (i == 1) currentWeather = Weather.Rainy;
+            else if (i == 2) currentWeather = Weather.Cloudy;
+            else if (i == 3 || i == 4) currentWeather = Weather.Sunny;
+            if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(65, 80);
+            if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(60, 70);
+            if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(70, 100);
+        }
+        else if (currentMonth <= 9)
+        {
+            currentSeason = Season.Fall;
+            int i = Random.Range(1, 5);
+            if (i == 1) currentWeather = Weather.Rainy;
+            else if (i == 2 || i == 3) currentWeather = Weather.Cloudy;
+            else if (i == 4) currentWeather = Weather.Sunny;
+            if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(35, 50);
+            if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(40, 55);
+            if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(50, 65);
+        }
+        else if (currentMonth <= 12)
+        {
+            currentSeason = Season.Winter;
+            int i = Random.Range(1, 4);
+            if (i == 1 || i == 2) currentWeather = Weather.Snowy;
+            else if (i == 3) currentWeather = Weather.Sunny;
+            if (currentWeather.Equals(Weather.Snowy)) currentTemperature = Random.Range(-10, 32);
+            if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(30, 40);
+        }
+    }
+
     //generate ground
     private void GenerateGround(int width, int height, int size)
     {
@@ -83,6 +143,92 @@ public class MainGameHandler : MonoBehaviour {
 	//update
 	void Update () {
 
+        //update HUD 
+        ButtonHandler.tempHud.transform.Find("Text").GetComponent<UnityEngine.UI.Text>().text = "Temperature: " + currentTemperature + "°F \n" +
+            "Season: " + currentSeason.ToString() + "\n" +
+            "Weather: " + currentWeather.ToString() + "\n" +
+            "Date: " + currentMonth + "/" + currentDay + "/" + currentYear + "\n" +
+            "Time: " + currentHour + ":" + (currentMinute > 10 ? currentMinute.ToString() : "0" + currentMinute);
+
+        //handle time/seasons
+        timeCycle += 1 * Time.deltaTime;
+        if (timeCycle >= 3)
+        {
+            //time
+            currentMinute++;
+            if (currentMinute >= 60)
+            {
+                currentMinute = 0;
+                currentHour++;
+            }
+
+            //date
+            if (currentHour > 24)
+            {
+                currentHour = 0;
+                currentDay++;
+                if (currentDay > 30)
+                {
+                    currentDay = 0;
+                    currentMonth++;
+                    if (currentMonth > 12)
+                    {
+                        currentMonth = 0;
+                        currentYear++;
+                    }
+                }
+
+                //seasons/weather/temperature
+                if (currentMonth <= 3)
+                {
+                    currentSeason = Season.Spring;
+                    int i = Random.Range(1, 4);
+                    if (i == 1) currentWeather = Weather.Rainy;
+                    else if (i == 2) currentWeather = Weather.Cloudy;
+                    else if (i == 3) currentWeather = Weather.Sunny;
+
+                    if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(50, 60);
+                    if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(45, 60);
+                    if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(60, 70);
+                }
+                else if (currentMonth <= 6)
+                {
+                    currentSeason = Season.Summer;
+                    int i = Random.Range(1, 5);
+                    if (i == 1) currentWeather = Weather.Rainy;
+                    else if (i == 2) currentWeather = Weather.Cloudy;
+                    else if (i == 3 || i == 4) currentWeather = Weather.Sunny;
+                    if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(65, 80);
+                    if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(60, 70);
+                    if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(70, 100);
+                }
+                else if (currentMonth <= 9)
+                {
+                    currentSeason = Season.Fall;
+                    int i = Random.Range(1, 5);
+                    if (i == 1) currentWeather = Weather.Rainy;
+                    else if (i == 2 || i == 3) currentWeather = Weather.Cloudy;
+                    else if (i == 4) currentWeather = Weather.Sunny;
+                    if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(35, 50);
+                    if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(40, 55);
+                    if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(50, 65);
+                }
+                else if (currentMonth <= 12)
+                {
+                    currentSeason = Season.Winter;
+                    int i = Random.Range(1, 4);
+                    if (i == 1 || i == 2) currentWeather = Weather.Snowy;
+                    else if (i == 3) currentWeather = Weather.Sunny;
+                    if (currentWeather.Equals(Weather.Snowy)) currentTemperature = Random.Range(-10, 32);
+                    if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(30, 40);
+                }
+            }
+
+            timeCycle = 0;
+        }
+
+
+        //handle game simulation
         AddLeaves();
 
         foreach (Ant ant in ants)
