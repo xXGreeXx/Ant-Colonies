@@ -1,16 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class RainDrop {
+public class SnowDrop : MonoBehaviour {
 
     //define global variables
-    public Sprite rainTexture = Resources.Load("raindrop", typeof(Sprite)) as Sprite;
+    public Sprite snowTexture = Resources.Load("snowflake", typeof(Sprite)) as Sprite;
 
     public GameObject self;
 
     //constructor
-    public RainDrop(int x, int y, int size)
+    public SnowDrop(int x, int y, int size)
     {
-        self = new GameObject("Drop");
+        self = new GameObject("Flake");
         self.transform.parent = GameObject.Find("Canvas").transform;
         self.transform.position = new Vector2(x, y);
         self.transform.localScale = new Vector2(50, 60);
@@ -22,7 +24,7 @@ public class RainDrop {
         collider.size = new Vector2(0.159F, 0.25F);
 
         SpriteRenderer renderer = self.AddComponent<SpriteRenderer>();
-        renderer.sprite = rainTexture;
+        renderer.sprite = snowTexture;
         renderer.size = new Vector2(size, size);
     }
 }

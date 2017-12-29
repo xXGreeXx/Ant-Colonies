@@ -27,6 +27,7 @@ public class MainGameHandler : MonoBehaviour {
     public static List<Larva> larvae = new List<Larva>();
     public static List<Leaf> leaves = new List<Leaf>();
     public static List<RainDrop> rain = new List<RainDrop>();
+    public static List<SnowDrop> snow = new List<SnowDrop>();
 
     public static float antSpeed = 0.5F;
     public static float ageOfEggToHatch = 50;
@@ -55,7 +56,7 @@ public class MainGameHandler : MonoBehaviour {
     //start base weather/date/time
     private void StartBaseWeatherDateTime()
     {
-        currentHour = 8;
+        currentHour = 12;
         currentMinute = 30;
 
         currentDay = System.DateTime.Now.Day;
@@ -107,7 +108,7 @@ public class MainGameHandler : MonoBehaviour {
             if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(30, 40);
         }
 
-        currentWeather = Weather.Rainy;
+        currentWeather = Weather.Snowy;
     }
 
     //generate ground
@@ -146,6 +147,18 @@ public class MainGameHandler : MonoBehaviour {
         }
     }
 
+    //add snow
+    private void AddSnow()
+    {
+        if (Random.Range(0, 10) == 5)
+        {
+            for (int i = 0; i < Random.Range(50, 150); i++)
+            {
+                snow.Add(new SnowDrop(Random.Range(-150, 150), 75, 100));
+            }
+        }
+    }
+
     //add leaves
     private void AddLeaves()
     {
@@ -167,7 +180,7 @@ public class MainGameHandler : MonoBehaviour {
 
         //handle time/seasons
         timeCycle += 1 * Time.deltaTime;
-        if (timeCycle >= 0)
+        if (timeCycle >= 3)
         {
             //time
             currentMinute++;
@@ -245,13 +258,15 @@ public class MainGameHandler : MonoBehaviour {
         //handle light
         float combinedColorLerp = 0;
 
-        combinedColorLerp += currentHour / 60 + currentMinute / 120;
+        combinedColorLerp += (Mathf.Abs(14 - currentHour) * 60 + 30) / 370F;
+        Debug.Log(combinedColorLerp);
 
         Camera.main.backgroundColor = Color.Lerp(Color.blue, Color.black, combinedColorLerp);
 
         //handle game simulation
         AddLeaves();
         if (currentWeather.Equals(Weather.Rainy)) AddRain();
+        if (currentWeather.Equals(Weather.Snowy)) AddSnow();
 
         foreach (Ant ant in ants)
         {
