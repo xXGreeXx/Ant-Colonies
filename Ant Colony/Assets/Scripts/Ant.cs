@@ -12,6 +12,7 @@ public class Ant {
     //define global variables
     public Sprite blackAntWorker = Resources.Load("blackAnt", typeof(Sprite)) as Sprite;
     public Sprite blackAntQueen = Resources.Load("blackAntQueen", typeof(Sprite)) as Sprite;
+    public Sprite foodSprite = Resources.Load("food", typeof(Sprite)) as Sprite;
 
     //data variables
     public GameObject self;
@@ -19,18 +20,19 @@ public class Ant {
     public bool produceLarvae = false;
     public AntType type;
     public GameObject goBeingHeld = null;
+    public Ant queen = null;
     public Vector2 targetPoint;
 
     //ant variables
     public float maxHealth;
     public float health;
     public float reproductionValue;
-    public float food = 50;
+    public float food = 40;
     public float rest;
     public float age;
 
     //constructor 
-    public Ant(float x, float y, bool isQueen, AntType type)
+    public Ant(float x, float y, bool isQueen, AntType type, Ant queen)
     {
         self = new GameObject("Ant");
         self.transform.parent = GameObject.Find("Canvas").transform;
@@ -38,11 +40,17 @@ public class Ant {
         self.transform.localScale = new Vector2(75, 75);
         self.layer = 8;
 
+        AntCollisionScript script = self.AddComponent<AntCollisionScript>();
+        script.parent = this;
+
         Rigidbody2D rigidBody = self.AddComponent<Rigidbody2D>();
+        rigidBody.mass = 5;
+        rigidBody.gravityScale = 2;
         BoxCollider2D collider = self.AddComponent<BoxCollider2D>();
         collider.size = new Vector2(0.47F, 0.26F);
         
         this.isQueen = isQueen;
+        if (!isQueen) this.queen = queen;
         this.type = type;
         SpriteRenderer renderer = self.AddComponent<SpriteRenderer>();
         renderer.size = new Vector2(50, 25);
@@ -81,11 +89,61 @@ public class Ant {
         }
     }
 
+    //pickup food
+    public void PickupFood()
+    {
+        if (goBeingHeld == null)
+        {
+            GameObject foodGo = new GameObject("Food");
+            foodGo.transform.SetParent(self.transform);
+            foodGo.transform.localScale = new Vector2(1, 1);
+            foodGo.transform.localPosition = new Vector2(-0.266F, 0.007F);
+
+            SpriteRenderer renderer = foodGo.AddComponent<SpriteRenderer>();
+            renderer.sprite = foodSprite;
+
+            goBeingHeld = foodGo;
+        }
+    }
+
+    //conusme food
+    public void ConsumeFood()
+    {
+        food += 100;
+        GameObject.Destroy(goBeingHeld);
+        goBeingHeld = null;
+    }
+
     //decide new point
     public Vector2 DecideNewPoint()
     {
         Vector2 pointToReturn = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
 
+        if (food <= 40 || queen.food <= 40)
+        {
+            if (goBeingHeld == null)
+            {
+                pointToReturn = MainGameHandler.leaves[Random.Range(0, MainGameHandler.leaves.Count)].self.transform.position;
+            }
+            else
+            {
+                if (food <= 40)
+                {
+                    ConsumeFood();
+                }
+                else
+                {
+                    if (queen.self != null)
+                    {
+                        pointToReturn = queen.self.transform.position;
+                    }
+                    else
+                    {
+                        ConsumeFood();
+                    }
+                }
+            }
+        }
 
         return pointToReturn;
     }

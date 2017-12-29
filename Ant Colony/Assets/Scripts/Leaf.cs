@@ -13,7 +13,7 @@ public class Leaf {
     //constructor
     public Leaf(int x, int y, int size)
     {
-        self = new GameObject("Leave");
+        self = new GameObject("Leaf");
         self.transform.parent = GameObject.Find("Canvas").transform;
         self.transform.position = new Vector2(x, y);
         self.transform.localScale = new Vector2(150, 150);

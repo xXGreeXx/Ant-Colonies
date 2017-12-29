@@ -10,9 +10,10 @@ public class Larva {
     public GameObject self;
     public int age;
     public Ant.AntType type;
+    public Ant queen;
 
     //constructor
-    public Larva(float x, float y, Ant.AntType type)
+    public Larva(float x, float y, Ant.AntType type, Ant queen)
     {
         self = new GameObject("Dirt " + x + y);
         self.transform.parent = GameObject.Find("Canvas").transform;
@@ -28,6 +29,7 @@ public class Larva {
         renderer.sprite = larvaTexture;
         renderer.size = new Vector2(5, 5);
 
+        this.queen = queen;
         this.type = type;
     }
 }

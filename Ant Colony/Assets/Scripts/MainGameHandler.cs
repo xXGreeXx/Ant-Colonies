@@ -32,6 +32,7 @@ public class MainGameHandler : MonoBehaviour {
     public static float antSpeed = 0.5F;
     public static float ageOfEggToHatch = 50;
     public static float antLifeExpectancy = 500;
+    public static float simulationSpeed = 1;
 
     //time/weather system
     public Season currentSeason;
@@ -107,8 +108,6 @@ public class MainGameHandler : MonoBehaviour {
             if (currentWeather.Equals(Weather.Snowy)) currentTemperature = Random.Range(-10, 32);
             if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(30, 40);
         }
-
-        currentWeather = Weather.Snowy;
     }
 
     //generate ground
@@ -131,7 +130,7 @@ public class MainGameHandler : MonoBehaviour {
     {
         for (int i = 0; i < 3; i++)
         {
-            ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.BlackAnt));
+            ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.BlackAnt, null));
         }
     }
 
@@ -259,8 +258,6 @@ public class MainGameHandler : MonoBehaviour {
         float combinedColorLerp = 0;
 
         combinedColorLerp += (Mathf.Abs(14 - currentHour) * 60 + 30) / 370F;
-        Debug.Log(combinedColorLerp);
-
         Camera.main.backgroundColor = Color.Lerp(Color.blue, Color.black, combinedColorLerp);
 
         //handle game simulation
@@ -304,13 +301,21 @@ public class MainGameHandler : MonoBehaviour {
             if (selfObject.reproductionValue >= 50 && selfObject.food - 40 > 0)
             {
                 selfObject.food -= 40;
-                MainGameHandler.larvae.Add(new Larva(selfObject.self.transform.position.x, selfObject.self.transform.position.y, selfObject.type));
+                MainGameHandler.larvae.Add(new Larva(selfObject.self.transform.position.x, selfObject.self.transform.position.y, selfObject.type, selfObject));
 
                 selfObject.reproductionValue = 0;
             }
         }
         else
         {
+            if (selfObject.food < 20)
+            {
+                if (!selfObject.isQueen)
+                {
+                    selfObject.targetPoint = selfObject.DecideNewPoint();
+                }
+            }
+
             if (Mathf.Abs(selfObject.self.transform.position.x - selfObject.targetPoint.x) < MainGameHandler.antSpeed * 5 && Mathf.Abs(selfObject.self.transform.position.y - selfObject.targetPoint.y) < MainGameHandler.antSpeed * 5)
             {
                 if (selfObject.isQueen)
@@ -356,7 +361,7 @@ public class MainGameHandler : MonoBehaviour {
 
         if (selfObject.age >= 50)
         {
-            MainGameHandler.ants.Add(new Ant(selfObject.self.transform.position.x, selfObject.self.transform.position.y, false, selfObject.type));
+            MainGameHandler.ants.Add(new Ant(selfObject.self.transform.position.x, selfObject.self.transform.position.y, false, selfObject.type,  selfObject.queen));
             MainGameHandler.larvae.Remove(selfObject);
             GameObject.Destroy(selfObject.self);
             return true;
