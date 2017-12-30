@@ -15,5 +15,18 @@ public class AntCollisionScript : MonoBehaviour {
             parent.PickupFood();
             parent.DecideNewPoint();
         }
+        if (name.Equals("Ant"))
+        {
+            if (parent.queen != null)
+            {
+                if (parent.goBeingHeld != null)
+                {
+                    GameObject.Destroy(parent.goBeingHeld);
+                    parent.goBeingHeld = null;
+                    parent.queen.food += 100;
+                    parent.DecideNewPoint();
+                }
+            }
+        }
     }
 }

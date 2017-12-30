@@ -30,7 +30,7 @@ public class MainGameHandler : MonoBehaviour {
     public static List<SnowDrop> snow = new List<SnowDrop>();
 
     public static float antSpeed = 0.5F;
-    public static float ageOfEggToHatch = 50;
+    public static float ageOfEggToHatch = 100;
     public static float antLifeExpectancy = 500;
     public static float simulationSpeed = 1;
 
@@ -298,7 +298,7 @@ public class MainGameHandler : MonoBehaviour {
         //handle movement etc
         if (selfObject.produceLarvae)
         {
-            if (selfObject.reproductionValue >= 50 && selfObject.food - 40 > 0)
+            if (selfObject.reproductionValue >= 120 && selfObject.food - 40 > 0)
             {
                 selfObject.food -= 40;
                 MainGameHandler.larvae.Add(new Larva(selfObject.self.transform.position.x, selfObject.self.transform.position.y, selfObject.type, selfObject));
@@ -308,7 +308,7 @@ public class MainGameHandler : MonoBehaviour {
         }
         else
         {
-            if (selfObject.food < 20)
+            if (selfObject.food < 40)
             {
                 if (!selfObject.isQueen)
                 {

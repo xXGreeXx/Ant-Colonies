@@ -38,7 +38,8 @@ public class Ant {
         self.transform.parent = GameObject.Find("Canvas").transform;
         self.transform.position = new Vector2(x, y);
         self.transform.localScale = new Vector2(75, 75);
-        self.layer = 8;
+        if (isQueen) self.layer = 10;
+        else self.layer = 8;
 
         AntCollisionScript script = self.AddComponent<AntCollisionScript>();
         script.parent = this;
@@ -59,6 +60,7 @@ public class Ant {
         {
             if (isQueen)
             {
+                rigidBody.mass = 100;
                 food = 500;
                 maxHealth = 50;
                 health = maxHealth;
@@ -118,16 +120,21 @@ public class Ant {
     public Vector2 DecideNewPoint()
     {
         Vector2 pointToReturn = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
+        float valueFood = food;
+        if (queen.self != null) valueFood = queen.food;
 
-        if (food <= 40 || queen.food <= 40)
+        if (valueFood <= 40)
         {
             if (goBeingHeld == null)
             {
-                pointToReturn = MainGameHandler.leaves[Random.Range(0, MainGameHandler.leaves.Count)].self.transform.position;
+                if (MainGameHandler.leaves.Count > 0)
+                {
+                    pointToReturn = MainGameHandler.leaves[Random.Range(0, MainGameHandler.leaves.Count)].self.transform.position;
+                }
             }
             else
             {
-                if (food <= 40)
+                if (food <= 15)
                 {
                     ConsumeFood();
                 }
