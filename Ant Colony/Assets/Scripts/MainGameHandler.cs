@@ -29,6 +29,7 @@ public class MainGameHandler : MonoBehaviour {
     public static List<RainDrop> rain = new List<RainDrop>();
     public static List<SnowDrop> snow = new List<SnowDrop>();
     public static List<Snow> snowBlocks = new List<Snow>();
+    public static List<DirtRubble> dirtRubble = new List<DirtRubble>();
 
     public static float antSpeed = 0.5F;
     public static float ageOfEggToHatch = 100;
@@ -121,7 +122,8 @@ public class MainGameHandler : MonoBehaviour {
                 bool setGrass = false;
                 if (y == -3) setGrass = true;
 
-                dirtBlocks.Add(new Dirt(x, y, size, setGrass));
+                Dirt dirt = new Dirt(x, y, size, setGrass);
+                if (y > -height / 2 + 3) dirtBlocks.Add(dirt);
             }
         }
     }
@@ -130,6 +132,7 @@ public class MainGameHandler : MonoBehaviour {
     private void CreateColonies()
     {
         ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.RedAnt, null));
+        ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.BlackAnt, null));
     }
 
     //add rain
@@ -262,6 +265,7 @@ public class MainGameHandler : MonoBehaviour {
         AddLeaves();
         if (currentWeather.Equals(Weather.Rainy)) AddRain();
         if (currentWeather.Equals(Weather.Snowy)) AddSnow();
+        if (currentTemperature > 35 && snowBlocks.Count > 0) snowBlocks.RemoveAt(Random.Range(0, snowBlocks.Count));
 
         foreach (Ant ant in ants)
         {
@@ -296,7 +300,7 @@ public class MainGameHandler : MonoBehaviour {
         //handle movement etc
         if (selfObject.produceLarvae)
         {
-            if (selfObject.reproductionValue >= 120 && selfObject.food - 40 > 0)
+            if (selfObject.reproductionValue >= 120 && selfObject.food - 40 > 30)
             {
                 selfObject.food -= 40;
                 MainGameHandler.larvae.Add(new Larva(selfObject.self.transform.position.x, selfObject.self.transform.position.y, selfObject.type, selfObject));
@@ -344,7 +348,7 @@ public class MainGameHandler : MonoBehaviour {
                 selfObject.self.GetComponent<Rigidbody2D>().MoveRotation(angle);
             }
 
-            if (Mathf.Abs(selfObject.self.transform.position.x - selfObject.targetPoint.x) < 1 || Mathf.Abs(selfObject.self.transform.position.y - selfObject.targetPoint.y) < 1)
+            if (Mathf.Abs(selfObject.self.transform.position.x - selfObject.targetPoint.x) < 1.5F || Mathf.Abs(selfObject.self.transform.position.y - selfObject.targetPoint.y) < 1.5F)
             {
                 selfObject.Dig();
             }

@@ -108,9 +108,10 @@ public class Ant {
     {
         foreach (Dirt d in MainGameHandler.dirtBlocks)
         {
-            if (Vector2.Distance(d.self.transform.position, self.transform.position) < 5F)
+            if (Mathf.Abs(Vector2.Distance(d.self.transform.position, self.transform.position)) < 5F)
             {
-                GameObject.Destroy(d.self, 1);
+                GameObject.Destroy(d.self, 0.5F);
+                MainGameHandler.dirtRubble.Add(new DirtRubble(d.self.transform.position.x, d.self.transform.position.y, 1000));
                 MainGameHandler.dirtBlocks.Remove(d);
                 break;
             }
@@ -149,7 +150,7 @@ public class Ant {
         float valueFood = food;
         if (queen.self != null) valueFood = queen.food;
 
-        if (valueFood <= 40)
+        if (valueFood <= 100)
         {
             if (goBeingHeld == null)
             {
