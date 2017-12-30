@@ -12,6 +12,8 @@ public class Ant {
     //define global variables
     public Sprite blackAntWorker = Resources.Load("blackAnt", typeof(Sprite)) as Sprite;
     public Sprite blackAntQueen = Resources.Load("blackAntQueen", typeof(Sprite)) as Sprite;
+    public Sprite redAntWorker = Resources.Load("redAnt", typeof(Sprite)) as Sprite;
+    public Sprite redAntQueen = Resources.Load("redAntQueen", typeof(Sprite)) as Sprite;
     public Sprite foodSprite = Resources.Load("food", typeof(Sprite)) as Sprite;
 
     //data variables
@@ -48,7 +50,6 @@ public class Ant {
         rigidBody.mass = 5;
         rigidBody.gravityScale = 2;
         BoxCollider2D collider = self.AddComponent<BoxCollider2D>();
-        collider.size = new Vector2(0.47F, 0.26F);
         
         this.isQueen = isQueen;
         if (!isQueen) this.queen = queen;
@@ -65,12 +66,37 @@ public class Ant {
                 maxHealth = 50;
                 health = maxHealth;
                 renderer.sprite = blackAntQueen;
+
+                collider.size = new Vector2(0.47F, 0.26F);
             }
             else
             {
                 maxHealth = 20;
                 health = maxHealth;
                 renderer.sprite = blackAntWorker;
+
+                collider.size = new Vector2(0.24F, 0.10F);
+            }
+        }
+        if (type.Equals(AntType.RedAnt))
+        {
+            if (isQueen)
+            {
+                rigidBody.mass = 100;
+                food = 500;
+                maxHealth = 50;
+                health = maxHealth;
+                renderer.sprite = redAntQueen;
+
+                collider.size = new Vector2(0.39F, 0.26F);
+            }
+            else
+            {
+                maxHealth = 20;
+                health = maxHealth;
+                renderer.sprite = redAntWorker;
+
+                collider.size = new Vector2(0.20F, 0.11F);
             }
         }
 
@@ -82,7 +108,7 @@ public class Ant {
     {
         foreach (Dirt d in MainGameHandler.dirtBlocks)
         {
-            if (Vector2.Distance(d.self.transform.position, self.transform.position) < 4.5F)
+            if (Vector2.Distance(d.self.transform.position, self.transform.position) < 5F)
             {
                 GameObject.Destroy(d.self, 1);
                 MainGameHandler.dirtBlocks.Remove(d);

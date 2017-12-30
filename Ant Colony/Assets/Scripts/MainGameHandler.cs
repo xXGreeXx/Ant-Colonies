@@ -28,6 +28,7 @@ public class MainGameHandler : MonoBehaviour {
     public static List<Leaf> leaves = new List<Leaf>();
     public static List<RainDrop> rain = new List<RainDrop>();
     public static List<SnowDrop> snow = new List<SnowDrop>();
+    public static List<Snow> snowBlocks = new List<Snow>();
 
     public static float antSpeed = 0.5F;
     public static float ageOfEggToHatch = 100;
@@ -128,10 +129,7 @@ public class MainGameHandler : MonoBehaviour {
     //generate base colonies
     private void CreateColonies()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.BlackAnt, null));
-        }
+        ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.RedAnt, null));
     }
 
     //add rain
@@ -341,8 +339,9 @@ public class MainGameHandler : MonoBehaviour {
                 if (distanceY < -MainGameHandler.antSpeed) distanceY = -MainGameHandler.antSpeed;
 
                 selfObject.self.GetComponent<Rigidbody2D>().MovePosition(selfObject.self.transform.position + new Vector3(distanceX, distanceY, 0));
+
                 float angle = Mathf.Atan2(-distanceY, -distanceX) * Mathf.Rad2Deg;
-                selfObject.self.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                selfObject.self.GetComponent<Rigidbody2D>().MoveRotation(angle);
             }
 
             if (Mathf.Abs(selfObject.self.transform.position.x - selfObject.targetPoint.x) < 1 || Mathf.Abs(selfObject.self.transform.position.y - selfObject.targetPoint.y) < 1)

@@ -9,15 +9,20 @@ public class DestroyOnImpact : MonoBehaviour {
     {
         if (collision.gameObject.name.Contains("Dirt"))
         {
-            foreach (Dirt d in MainGameHandler.dirtBlocks)
+            if (this.name.Equals("Drop"))
             {
-                if (d.self.name.Equals(collision.gameObject.name))
+                foreach (Dirt d in MainGameHandler.dirtBlocks)
                 {
-                    d.IncreaseMoisture(0.1F);
-                    break;
+                    if (d.self.name.Equals(collision.gameObject.name))
+                    {
+                        d.IncreaseMoisture(0.1F);
+                        break;
+                    }
                 }
             }
         }
+
+        if (this.name.Equals("Flake") && !collision.gameObject.name.Equals("Flake")) MainGameHandler.snowBlocks.Add(new Snow(collision.transform.position.x, collision.transform.position.y, 1000));
 
         Destroy(this.gameObject);
     }
