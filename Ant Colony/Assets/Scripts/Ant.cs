@@ -148,7 +148,10 @@ public class Ant {
     {
         Vector2 pointToReturn = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
         float valueFood = food;
-        if (queen.self != null) valueFood = queen.food;
+        if (queen != null)
+        {
+            if (queen.self != null) valueFood = queen.food;
+        }
 
         if (valueFood <= 100)
         {
