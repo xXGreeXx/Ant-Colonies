@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ButtonHandler : MonoBehaviour {
 
@@ -33,7 +34,7 @@ public class ButtonHandler : MonoBehaviour {
             tempHudActive = !tempHudActive;
             tempHud.SetActive(tempHudActive);
         }
-        if (button.Equals("Menu"))
+        if (button.Equals("Menu") || button.Equals("Return"))
         {
             menuHudActive = !menuHudActive;
             menuHud.SetActive(menuHudActive);
@@ -42,6 +43,15 @@ public class ButtonHandler : MonoBehaviour {
         {
             environmentHudActive = !environmentHudActive;
             environmentHud.SetActive(environmentHudActive);
+        }
+
+        if (button.Equals("ReturnMenu"))
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+        if (button.Equals("Quit"))
+        {
+            MainGameHandler.ExitGame();
         }
     }
 }

@@ -76,8 +76,8 @@ public class MainGameHandler : MonoBehaviour {
             else if (i == 3) currentWeather = Weather.Sunny;
 
             if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(50, 60);
-            if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(45, 60);
-            if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(60, 70);
+            if (currentWeather.Equals(Weather.Snowy)) currentTemperature = Random.Range(45, 60);
+            if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(60, 70);
         }
         else if (currentMonth <= 6)
         {
@@ -216,8 +216,8 @@ public class MainGameHandler : MonoBehaviour {
                     else if (i == 3) currentWeather = Weather.Sunny;
 
                     if (currentWeather.Equals(Weather.Rainy)) currentTemperature = Random.Range(50, 60);
-                    if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(45, 60);
-                    if (currentWeather.Equals(Weather.Sunny)) currentTemperature = Random.Range(60, 70);
+                    if (currentWeather.Equals(Weather.Snowy)) currentTemperature = Random.Range(45, 60);
+                    if (currentWeather.Equals(Weather.Cloudy)) currentTemperature = Random.Range(60, 70);
                 }
                 else if (currentMonth <= 6)
                 {
@@ -371,5 +371,11 @@ public class MainGameHandler : MonoBehaviour {
         }
 
         return false;
+    }
+
+    //handle exit
+    public static void ExitGame()
+    {
+        Application.Quit();
     }
 }

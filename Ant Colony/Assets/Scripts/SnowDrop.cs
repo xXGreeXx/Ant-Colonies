@@ -15,7 +15,7 @@ public class SnowDrop : MonoBehaviour {
         self = new GameObject("Flake");
         self.transform.parent = GameObject.Find("Canvas").transform;
         self.transform.position = new Vector2(x, y);
-        self.transform.localScale = new Vector2(50, 60);
+        self.transform.localScale = new Vector2(Random.Range(10, 30), Random.Range(10, 30));
         self.AddComponent<DestroyOnImpact>();
 
         Rigidbody2D rigid = self.AddComponent<Rigidbody2D>();

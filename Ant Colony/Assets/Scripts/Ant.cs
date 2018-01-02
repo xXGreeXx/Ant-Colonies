@@ -6,7 +6,12 @@ public class Ant {
     public enum AntType
     {
         BlackAnt,
-        RedAnt
+        RedAnt,
+        GhostAnt,
+        CarpenterAnt,
+        CrazyAnt,
+        RoverAnt,
+        PharaohAnt,
     }
 
     //define global variables
@@ -24,6 +29,7 @@ public class Ant {
     public GameObject goBeingHeld = null;
     public Ant queen = null;
     public Vector2 targetPoint;
+    public Vector2 pointStored;
 
     //ant variables
     public float maxHealth;
@@ -67,7 +73,7 @@ public class Ant {
                 health = maxHealth;
                 renderer.sprite = blackAntQueen;
 
-                collider.size = new Vector2(0.47F, 0.26F);
+                collider.size = new Vector2(0.46F, 0.24F);
             }
             else
             {
@@ -88,7 +94,7 @@ public class Ant {
                 health = maxHealth;
                 renderer.sprite = redAntQueen;
 
-                collider.size = new Vector2(0.39F, 0.26F);
+                collider.size = new Vector2(0.39F, 0.17F);
             }
             else
             {
@@ -108,11 +114,21 @@ public class Ant {
     {
         foreach (Dirt d in MainGameHandler.dirtBlocks)
         {
-            if (Mathf.Abs(Vector2.Distance(d.self.transform.position, self.transform.position)) < 5F)
+            if (Mathf.Abs(Vector2.Distance(d.self.transform.position, self.transform.position)) < 4.5F)
             {
                 GameObject.Destroy(d.self, 0.5F);
-                MainGameHandler.dirtRubble.Add(new DirtRubble(d.self.transform.position.x, d.self.transform.position.y, 1000));
                 MainGameHandler.dirtBlocks.Remove(d);
+
+                DirtRubble rubble = new DirtRubble(d.self.transform.position.x, d.self.transform.position.y, 1000);
+                MainGameHandler.dirtRubble.Add(rubble);
+                if (!isQueen)
+                {
+                    goBeingHeld = rubble.self;
+                    pointStored = targetPoint;
+                    targetPoint = new Vector2(d.self.transform.position.x - Random.Range(0, 2) == 2 ? 20 : -20, 0);
+                    rubble.self.transform.SetParent(rubble.self.transform);
+                }
+
                 break;
             }
         }
@@ -164,20 +180,29 @@ public class Ant {
             }
             else
             {
-                if (food <= 15)
+                if (goBeingHeld.name.Equals("Food"))
                 {
-                    ConsumeFood();
-                }
-                else
-                {
-                    if (queen.self != null)
-                    {
-                        pointToReturn = queen.self.transform.position;
-                    }
-                    else
+                    if (food <= 15)
                     {
                         ConsumeFood();
                     }
+                    else
+                    {
+                        if (queen.self != null)
+                        {
+                            pointToReturn = queen.self.transform.position;
+                        }
+                        else
+                        {
+                            ConsumeFood();
+                        }
+                    }
+                }
+                else if (goBeingHeld.name.Equals("Rubble"))
+                {
+                    goBeingHeld.transform.SetParent(null);
+                    goBeingHeld = null;
+                    targetPoint = pointStored;
                 }
             }
         }
