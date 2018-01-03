@@ -22,8 +22,8 @@ public class MainGameHandler : MonoBehaviour {
     }
 
     //define global variables
+    public static List<GameObject> ants = new List<GameObject>();
     public static List<Dirt> dirtBlocks = new List<Dirt>();
-    public static List<Ant> ants = new List<Ant>();
     public static List<Larva> larvae = new List<Larva>();
     public static List<Leaf> leaves = new List<Leaf>();
     public static List<RainDrop> rain = new List<RainDrop>();
@@ -131,8 +131,78 @@ public class MainGameHandler : MonoBehaviour {
     //generate base colonies
     private void CreateColonies()
     {
-        ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.RedAnt, null));
-        ants.Add(new Ant(Random.Range(-100, 100), 0, true, Ant.AntType.BlackAnt, null));
+        ants.Add(CreateAnt(Random.Range(-100, 100), 0, true, Ant.AntType.RedAnt, null));
+    }
+
+    //create ant 
+    public GameObject CreateAnt(float x, float y, bool isQueen, Ant.AntType type, Ant queen)
+    {
+        GameObject self = new GameObject("Ant");
+        self.transform.parent = GameObject.Find("Canvas").transform;
+        self.transform.position = new Vector2(x, y);
+        self.transform.localScale = new Vector2(75, 75);
+        if (isQueen) self.layer = 10;
+        else self.layer = 8;
+
+        Ant selfAnt = self.AddComponent<Ant>();
+        AntCollisionScript script = self.AddComponent<AntCollisionScript>();
+        script.parent = selfAnt;
+
+        Rigidbody2D rigidBody = self.AddComponent<Rigidbody2D>();
+        rigidBody.mass = 1;
+        rigidBody.gravityScale = 2;
+        BoxCollider2D collider = self.AddComponent<BoxCollider2D>();
+
+        selfAnt.isQueen = isQueen;
+        if (!isQueen) selfAnt.queen = queen;
+        selfAnt.type = type;
+        SpriteRenderer renderer = self.AddComponent<SpriteRenderer>();
+        renderer.size = new Vector2(50, 25);
+
+        if (type.Equals(Ant.AntType.BlackAnt))
+        {
+            if (isQueen)
+            {
+                rigidBody.mass = 100;
+                selfAnt.food = 500;
+                selfAnt.maxHealth = 50;
+                selfAnt.health = selfAnt.maxHealth;
+                renderer.sprite = SpriteManager.blackAntQueen;
+
+                collider.size = new Vector2(0.46F, 0.24F);
+            }
+            else
+            {
+                selfAnt.maxHealth = 20;
+                selfAnt.health = selfAnt.maxHealth;
+                renderer.sprite = SpriteManager.blackAntWorker;
+
+                collider.size = new Vector2(0.24F, 0.10F);
+            }
+        }
+        if (type.Equals(Ant.AntType.RedAnt))
+        {
+            if (isQueen)
+            {
+                rigidBody.mass = 100;
+                selfAnt.food = 500;
+                selfAnt.maxHealth = 50;
+                selfAnt.health = selfAnt.maxHealth;
+                renderer.sprite = SpriteManager.redAntQueen;
+
+                collider.size = new Vector2(0.39F, 0.17F);
+            }
+            else
+            {
+                selfAnt.maxHealth = 20;
+                selfAnt.health = selfAnt.maxHealth;
+                renderer.sprite = SpriteManager.redAntWorker;
+
+                collider.size = new Vector2(0.20F, 0.11F);
+            }
+        }
+
+        return self;
     }
 
     //add rain
@@ -267,7 +337,7 @@ public class MainGameHandler : MonoBehaviour {
         if (currentWeather.Equals(Weather.Snowy)) AddSnow();
         if (currentTemperature > 35 && snowBlocks.Count > 0) snowBlocks.RemoveAt(Random.Range(0, snowBlocks.Count));
 
-        foreach (Ant ant in ants)
+        foreach (GameObject ant in ants)
         {
             bool breakLoop = SimulateAnt(ant);
 
@@ -283,8 +353,10 @@ public class MainGameHandler : MonoBehaviour {
 	}
 
     //simulate ant
-    public bool SimulateAnt(Ant selfObject)
+    public bool SimulateAnt(GameObject goGiven)
     {
+        Ant selfObject = goGiven.GetComponent<Ant>();
+
         //handle needs
         selfObject.reproductionValue++;
         selfObject.food -= 0.05F;
@@ -292,8 +364,8 @@ public class MainGameHandler : MonoBehaviour {
         if (selfObject.food <= 0) selfObject.health -= 1;
         if (selfObject.health <= 0)
         {
-            MainGameHandler.ants.Remove(selfObject);
-            GameObject.Destroy(selfObject.self);
+            MainGameHandler.ants.Remove(selfObject.transform.gameObject);
+            GameObject.Destroy(selfObject);
             return true;
         }
 
@@ -303,7 +375,7 @@ public class MainGameHandler : MonoBehaviour {
             if (selfObject.reproductionValue >= 120 && selfObject.food - 40 > 30)
             {
                 selfObject.food -= 40;
-                MainGameHandler.larvae.Add(new Larva(selfObject.self.transform.position.x, selfObject.self.transform.position.y, selfObject.type, selfObject));
+                MainGameHandler.larvae.Add(new Larva(selfObject.transform.position.x, selfObject.transform.position.y, selfObject.type, selfObject));
 
                 selfObject.reproductionValue = 0;
             }
@@ -318,13 +390,13 @@ public class MainGameHandler : MonoBehaviour {
                 }
             }
 
-            if (Mathf.Abs(selfObject.self.transform.position.x - selfObject.targetPoint.x) < MainGameHandler.antSpeed * 5 && Mathf.Abs(selfObject.self.transform.position.y - selfObject.targetPoint.y) < MainGameHandler.antSpeed * 5)
+            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < MainGameHandler.antSpeed * 5 && Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < MainGameHandler.antSpeed * 5)
             {
                 if (selfObject.isQueen)
                 {
                     selfObject.produceLarvae = true;
-                    selfObject.targetPoint = new Vector2(selfObject.self.transform.position.x - 3, selfObject.self.transform.position.y);
-                    selfObject.self.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    selfObject.targetPoint = new Vector2(selfObject.transform.position.x - 3, selfObject.transform.position.y);
+                    selfObject.transform.rotation = Quaternion.Euler(0, 0, 0);
                 }
                 else
                 {
@@ -333,8 +405,8 @@ public class MainGameHandler : MonoBehaviour {
             }
             else
             {
-                float distanceX = selfObject.targetPoint.x - selfObject.self.transform.position.x;
-                float distanceY = selfObject.targetPoint.y - selfObject.self.transform.position.y;
+                float distanceX = selfObject.targetPoint.x - selfObject.transform.position.x;
+                float distanceY = selfObject.targetPoint.y - selfObject.transform.position.y;
 
                 if (distanceX > MainGameHandler.antSpeed) distanceX = MainGameHandler.antSpeed;
                 if (distanceY > MainGameHandler.antSpeed) distanceY = MainGameHandler.antSpeed;
@@ -342,13 +414,14 @@ public class MainGameHandler : MonoBehaviour {
                 if (distanceX < -MainGameHandler.antSpeed) distanceX = -MainGameHandler.antSpeed;
                 if (distanceY < -MainGameHandler.antSpeed) distanceY = -MainGameHandler.antSpeed;
 
-                selfObject.self.GetComponent<Rigidbody2D>().MovePosition(selfObject.self.transform.position + new Vector3(distanceX, distanceY, 0));
+                //if (distanceY > 0 && selfObject.self.transform.position.y < 0) distanceY = 0;
 
+                selfObject.GetComponent<Rigidbody2D>().MovePosition(selfObject.transform.position + new Vector3(distanceX, distanceY, 0));
                 float angle = Mathf.Atan2(-distanceY, -distanceX) * Mathf.Rad2Deg;
-                selfObject.self.GetComponent<Rigidbody2D>().MoveRotation(angle);
+                selfObject.GetComponent<Rigidbody2D>().MoveRotation(angle);
             }
 
-            if (Mathf.Abs(selfObject.self.transform.position.x - selfObject.targetPoint.x) < 1.5F || Mathf.Abs(selfObject.self.transform.position.y - selfObject.targetPoint.y) < 1.5F)
+            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < 1.5F || Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < 1.5F)
             {
                 selfObject.Dig();
             }
@@ -364,7 +437,7 @@ public class MainGameHandler : MonoBehaviour {
 
         if (selfObject.age >= 50)
         {
-            MainGameHandler.ants.Add(new Ant(selfObject.self.transform.position.x, selfObject.self.transform.position.y, false, selfObject.type,  selfObject.queen));
+            MainGameHandler.ants.Add(CreateAnt(selfObject.self.transform.position.x, selfObject.self.transform.position.y, false, selfObject.type,  selfObject.queen));
             MainGameHandler.larvae.Remove(selfObject);
             GameObject.Destroy(selfObject.self);
             return true;

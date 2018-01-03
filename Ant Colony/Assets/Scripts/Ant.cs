@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Ant {
+public class Ant : MonoBehaviour{
 
     //enums
     public enum AntType
@@ -14,15 +14,7 @@ public class Ant {
         PharaohAnt,
     }
 
-    //define global variables
-    public Sprite blackAntWorker = Resources.Load("blackAnt", typeof(Sprite)) as Sprite;
-    public Sprite blackAntQueen = Resources.Load("blackAntQueen", typeof(Sprite)) as Sprite;
-    public Sprite redAntWorker = Resources.Load("redAnt", typeof(Sprite)) as Sprite;
-    public Sprite redAntQueen = Resources.Load("redAntQueen", typeof(Sprite)) as Sprite;
-    public Sprite foodSprite = Resources.Load("food", typeof(Sprite)) as Sprite;
-
     //data variables
-    public GameObject self;
     public bool isQueen;
     public bool produceLarvae = false;
     public AntType type;
@@ -40,72 +32,8 @@ public class Ant {
     public float age;
 
     //constructor 
-    public Ant(float x, float y, bool isQueen, AntType type, Ant queen)
+    void Start()
     {
-        self = new GameObject("Ant");
-        self.transform.parent = GameObject.Find("Canvas").transform;
-        self.transform.position = new Vector2(x, y);
-        self.transform.localScale = new Vector2(75, 75);
-        if (isQueen) self.layer = 10;
-        else self.layer = 8;
-
-        AntCollisionScript script = self.AddComponent<AntCollisionScript>();
-        script.parent = this;
-
-        Rigidbody2D rigidBody = self.AddComponent<Rigidbody2D>();
-        rigidBody.mass = 5;
-        rigidBody.gravityScale = 2;
-        BoxCollider2D collider = self.AddComponent<BoxCollider2D>();
-        
-        this.isQueen = isQueen;
-        if (!isQueen) this.queen = queen;
-        this.type = type;
-        SpriteRenderer renderer = self.AddComponent<SpriteRenderer>();
-        renderer.size = new Vector2(50, 25);
-
-        if (type.Equals(AntType.BlackAnt))
-        {
-            if (isQueen)
-            {
-                rigidBody.mass = 100;
-                food = 500;
-                maxHealth = 50;
-                health = maxHealth;
-                renderer.sprite = blackAntQueen;
-
-                collider.size = new Vector2(0.46F, 0.24F);
-            }
-            else
-            {
-                maxHealth = 20;
-                health = maxHealth;
-                renderer.sprite = blackAntWorker;
-
-                collider.size = new Vector2(0.24F, 0.10F);
-            }
-        }
-        if (type.Equals(AntType.RedAnt))
-        {
-            if (isQueen)
-            {
-                rigidBody.mass = 100;
-                food = 500;
-                maxHealth = 50;
-                health = maxHealth;
-                renderer.sprite = redAntQueen;
-
-                collider.size = new Vector2(0.39F, 0.17F);
-            }
-            else
-            {
-                maxHealth = 20;
-                health = maxHealth;
-                renderer.sprite = redAntWorker;
-
-                collider.size = new Vector2(0.20F, 0.11F);
-            }
-        }
-
         targetPoint = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
     }
 
@@ -114,7 +42,7 @@ public class Ant {
     {
         foreach (Dirt d in MainGameHandler.dirtBlocks)
         {
-            if (Mathf.Abs(Vector2.Distance(d.self.transform.position, self.transform.position)) < 4.5F)
+            if (Mathf.Abs(Vector2.Distance(d.self.transform.position, this.gameObject.transform.position)) < 4.5F)
             {
                 GameObject.Destroy(d.self, 0.5F);
                 MainGameHandler.dirtBlocks.Remove(d);
@@ -140,12 +68,12 @@ public class Ant {
         if (goBeingHeld == null)
         {
             GameObject foodGo = new GameObject("Food");
-            foodGo.transform.SetParent(self.transform);
+            foodGo.transform.SetParent(this.gameObject.transform);
             foodGo.transform.localScale = new Vector2(1, 1);
             foodGo.transform.localPosition = new Vector2(-0.266F, 0.007F);
 
             SpriteRenderer renderer = foodGo.AddComponent<SpriteRenderer>();
-            renderer.sprite = foodSprite;
+            renderer.sprite = SpriteManager.foodSprite;
 
             goBeingHeld = foodGo;
         }
@@ -166,7 +94,7 @@ public class Ant {
         float valueFood = food;
         if (queen != null)
         {
-            if (queen.self != null) valueFood = queen.food;
+            if (queen.gameObject != null) valueFood = queen.food;
         }
 
         if (valueFood <= 100)
@@ -188,11 +116,19 @@ public class Ant {
                     }
                     else
                     {
-                        if (queen.self != null)
+                        bool justEatFood = false;
+
+                        if (queen != null)
                         {
-                            pointToReturn = queen.self.transform.position;
+                            if (queen.gameObject != null)
+                            {
+                                pointToReturn = queen.gameObject.transform.position;
+                            }
+                            else justEatFood = true;
                         }
-                        else
+                        else justEatFood = true;
+                        
+                        if(justEatFood)
                         {
                             ConsumeFood();
                         }
