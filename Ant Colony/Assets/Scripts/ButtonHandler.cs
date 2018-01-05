@@ -9,9 +9,11 @@ public class ButtonHandler : MonoBehaviour {
     public static GameObject tempHud;
     public static GameObject menuHud;
     public static GameObject environmentHud;
+    public static GameObject antPediaHUD;
     bool tempHudActive = false;
     bool menuHudActive = false;
     bool environmentHudActive = false;
+    bool antPediaHUDActive = false;
 
     //start
     void Start()
@@ -24,6 +26,9 @@ public class ButtonHandler : MonoBehaviour {
 
         environmentHud = GameObject.Find("environmentHUD");
         environmentHud.SetActive(false);
+
+        antPediaHUD = GameObject.Find("antPediaHUD");
+        antPediaHUD.SetActive(false);
     }
 
     //handle button presses
@@ -48,6 +53,11 @@ public class ButtonHandler : MonoBehaviour {
         if (button.Equals("ReturnMenu"))
         {
             SceneManager.LoadScene("MainMenu");
+        }
+        if (button.Equals("AntPedia"))
+        {
+            antPediaHUDActive = !antPediaHUDActive;
+            antPediaHUD.SetActive(antPediaHUDActive);
         }
         if (button.Equals("Quit"))
         {
