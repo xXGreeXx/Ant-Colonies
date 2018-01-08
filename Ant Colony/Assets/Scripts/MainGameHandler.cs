@@ -31,7 +31,7 @@ public class MainGameHandler : MonoBehaviour {
     public static List<Snow> snowBlocks = new List<Snow>();
     public static List<DirtRubble> dirtRubble = new List<DirtRubble>();
 
-    public static float antSpeed = 0.5F;
+    public static float antSpeed = 0.25F;
     public static float ageOfEggToHatch = 100;
     public static float antLifeExpectancy = 500;
     public static float simulationSpeed = 1;
@@ -390,7 +390,7 @@ public class MainGameHandler : MonoBehaviour {
                 }
             }
 
-            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < MainGameHandler.antSpeed * 5 && Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < MainGameHandler.antSpeed * 5)
+            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < MainGameHandler.antSpeed * 2 && Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < MainGameHandler.antSpeed * 2)
             {
                 if (selfObject.isQueen)
                 {
@@ -414,14 +414,16 @@ public class MainGameHandler : MonoBehaviour {
                 if (distanceX < -MainGameHandler.antSpeed) distanceX = -MainGameHandler.antSpeed;
                 if (distanceY < -MainGameHandler.antSpeed) distanceY = -MainGameHandler.antSpeed;
 
-                //if (distanceY > 0 && selfObject.self.transform.position.y < 0) distanceY = 0;
+                if (distanceY > 0 && selfObject.transform.position.y < 0) distanceY = 0;
 
                 selfObject.GetComponent<Rigidbody2D>().MovePosition(selfObject.transform.position + new Vector3(distanceX, distanceY, 0));
+
                 float angle = Mathf.Atan2(-distanceY, -distanceX) * Mathf.Rad2Deg;
                 selfObject.GetComponent<Rigidbody2D>().MoveRotation(angle);
             }
 
-            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < 1.5F || Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < 1.5F)
+            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < antSpeed * 3 
+                || Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < antSpeed * 3)
             {
                 selfObject.Dig();
             }

@@ -47,15 +47,16 @@ public class Ant : MonoBehaviour{
                 GameObject.Destroy(d.self, 0.5F);
                 MainGameHandler.dirtBlocks.Remove(d);
 
-                DirtRubble rubble = new DirtRubble(d.self.transform.position.x, d.self.transform.position.y, 1000);
-                MainGameHandler.dirtRubble.Add(rubble);
-                if (!isQueen)
-                {
-                    goBeingHeld = rubble.self;
-                    pointStored = targetPoint;
-                    targetPoint = new Vector2(d.self.transform.position.x - Random.Range(0, 2) == 2 ? 20 : -20, 0);
-                    rubble.self.transform.SetParent(rubble.self.transform);
-                }
+                //TODO\\ re-enable this code(adds rubble when dirt is dug)
+                //DirtRubble rubble = new DirtRubble(d.self.transform.position.x, d.self.transform.position.y, 1000);
+                //MainGameHandler.dirtRubble.Add(rubble);
+                //if (!isQueen)
+                //{
+                //    goBeingHeld = rubble.self;
+                //    pointStored = targetPoint;
+                //    targetPoint = new Vector2(d.self.transform.position.x - Random.Range(0, 2) == 2 ? 20 : -20, 0);
+                //    rubble.self.transform.SetParent(rubble.self.transform);
+                //}
 
                 break;
             }
@@ -90,7 +91,7 @@ public class Ant : MonoBehaviour{
     //decide new point
     public Vector2 DecideNewPoint()
     {
-        Vector2 pointToReturn = new Vector2(Random.Range(-75, 75), Random.Range(-75, -20));
+        Vector2 pointToReturn = new Vector2(Random.Range(-75, 75), Random.Range(-50, -20));
         float valueFood = food;
         if (queen != null)
         {
