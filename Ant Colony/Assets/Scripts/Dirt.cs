@@ -15,9 +15,8 @@ public class Dirt {
     public Dirt(int x, int y, int size, bool setGrass)
     {
         self = new GameObject("Dirt " + x + y);
-        self.transform.parent = GameObject.Find("Canvas").transform;
         self.transform.position = new Vector2(x, y);
-        self.transform.localScale = new Vector2(75, 75);
+        self.transform.localScale = new Vector2(11.75F, 11.75F);
 
         BoxCollider2D collider = self.AddComponent<BoxCollider2D>();
         collider.size = new Vector2(0.26F, 0.26F);

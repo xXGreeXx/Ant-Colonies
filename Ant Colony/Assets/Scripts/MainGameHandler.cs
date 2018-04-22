@@ -138,9 +138,8 @@ public class MainGameHandler : MonoBehaviour {
     public GameObject CreateAnt(float x, float y, bool isQueen, Ant.AntType type, Ant queen)
     {
         GameObject self = new GameObject("Ant");
-        self.transform.parent = GameObject.Find("Canvas").transform;
         self.transform.position = new Vector2(x, y);
-        self.transform.localScale = new Vector2(75, 75);
+        self.transform.localScale = new Vector2(12.5F, 12.5F);
         if (isQueen) self.layer = 10;
         else self.layer = 8;
 
@@ -389,8 +388,7 @@ public class MainGameHandler : MonoBehaviour {
                     selfObject.targetPoint = selfObject.DecideNewPoint();
                 }
             }
-
-            if (Mathf.Abs(selfObject.transform.position.x - selfObject.targetPoint.x) < MainGameHandler.antSpeed * 2 && Mathf.Abs(selfObject.transform.position.y - selfObject.targetPoint.y) < MainGameHandler.antSpeed * 2)
+            if (Vector2.Distance(selfObject.transform.position, selfObject.targetPoint) <= 2)
             {
                 if (selfObject.isQueen)
                 {
